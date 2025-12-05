@@ -19,11 +19,22 @@ pragma solidity ^0.8.20;
 
 ################################################################################*/
 
-import {ReentrancyGuardUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import {OwnershipStorage} from "src/facets/baseFacets/ownership/OwnershipStorage.sol";
+import {
+    ReentrancyGuardUpgradeable
+} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import {
+    OwnershipStorage
+} from "src/facets/baseFacets/ownership/OwnershipStorage.sol";
+import {
+    GovernanceStorage
+} from "src/facets/utilityFacets/governance/GovernanceStorage.sol";
+import {IGovernance} from "src/facets/utilityFacets/governance/IGovernance.sol";
 
 /// @notice Thrown when caller is not the diamond owner
 error Diamond_UnauthorizedCaller();
+
+/// @notice Thrown when caller is not governance or proposal execution
+error Diamond_NotGovernance();
 
 /// @notice Thrown when a function is called while the garden is connected to an index
 error Facet_CannotCallIfConnectedToIndex();
@@ -36,5 +47,22 @@ abstract contract Facet is ReentrancyGuardUpgradeable {
             revert Diamond_UnauthorizedCaller();
         }
         _;
+    }
+
+    /// @notice Restricts function access to governance (DAO)
+    /// @dev Allows either direct call from Diamond (during proposal execution) or owner (admin override)
+    modifier onlyGovernance() {
+        if (
+            msg.sender != address(this) &&
+            msg.sender != OwnershipStorage.layout().owner
+        ) {
+            revert Diamond_NotGovernance();
+        }
+        _;
+    }
+
+    /// @notice Helper to get contract owner
+    function _contractOwner() internal view returns (address) {
+        return OwnershipStorage.layout().owner;
     }
 }

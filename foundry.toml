@@ -2,5 +2,29 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+solc = "0.8.22"
+optimizer = true
+optimizer_runs = 200
+via_ir = true
+fs_permissions = [{ access = "read-write", path = "../" }]
+
+# RPC endpoints for deployment and forking
+[rpc_endpoints]
+arbitrum = "${RPC_URL_ARBITRUM}"
+polygon = "${RPC_URL_POLYGON}"
+avalanche = "${RPC_URL_AVALANCHE}"
+base = "${RPC_URL_BASE}"
+bsc = "${RPC_URL_BSC}"
+anvil = "${RPC_URL_ANVIL}"
+sepolia = "https://ethereum-sepolia-rpc.publicnode.com"
+
+# Etherscan API keys for contract verification
+[etherscan]
+arbitrum = { key = "${API_KEY_ARBISCAN}" }
+polygon = { key = "${API_KEY_POLYGONSCAN}" }
+avalanche = { key = "${API_KEY_SNOWTRACE}" }
+base = { key = "${API_KEY_BASESCAN}" }
+bsc = { key = "${API_KEY_BSCSCAN}" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
